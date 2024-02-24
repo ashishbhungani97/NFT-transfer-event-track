@@ -2,14 +2,16 @@ const express = require('express');
 const router = express.Router();
 const dotenv = require('dotenv');
 const NFTInfo = require('../../models/NFTInfo');
+const Pooldata = require('../../models/Pooldata');
+const StakeInfo = require('../../models/StakeInfo');
 dotenv.config();
 
 router.get('/', [], async (req, res) => {
     try {
         let { page, address } = req.query;
-        
+
         if (address) {
-        
+
             NFTInfo.aggregate([
                 {
                     $group: {
@@ -24,7 +26,7 @@ router.get('/', [], async (req, res) => {
                 },
                 {
                     $match: {
-                        'latestTransfer.owner':  address.toString().toLowerCase() // Case-insensitive exact match
+                        'latestTransfer.owner': address.toString().toLowerCase() // Case-insensitive exact match
                     }
                 },
                 {
@@ -91,32 +93,118 @@ router.get('/', [], async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
-        return res.status(200).json({ error: errors.message });
+        return res.status(200).json({ error: error.message });
     }
 })
 
-router.get('/metadata/:id', (req, res) => {
-    const { id } = req.params;
-    const jsonFilePath = path.join(__dirname, 'upload', 'Json', `${id}.json`);
+router.get('/upcoming-pool', async (req, res) => {
+    let { page } = req.query;
+    const perPage = 10;
+    if (!page || page == 'undefined' || page <= 0) {
+        page = 1;
+    }
 
-    // Check if the JSON file exists
-    fs.access(jsonFilePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            console.error('Error:', err);
-            return res.status(404).json({ error: 'Metadata not found' });
+    let offset = parseInt(parseInt(page) - 1) * perPage;
+   
+    try {
+        const currentTimeUnix = Math.floor(Date.now() / 1000);
+        const count = await Pooldata.countDocuments({ startTime: { $gt: currentTimeUnix } });
+        let data = await Pooldata.find({ startTime: { $gt: currentTimeUnix } })
+            .sort({ startTime: 1 })
+            .skip(offset)
+            .limit(perPage)
+
+        if (data) {
+            return res.status(200).json({ error: 'OK', data: data, count });
         }
+        else {
+            return res.status(200).json({ error: 'OK', data: [], count: 0 });
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+        return res.status(200).json({ error: error.message });
+    }
+});
 
-        // Read the JSON file and send its contents as response
-        fs.readFile(jsonFilePath, 'utf8', (err, data) => {
-            if (err) {
-                console.error('Error:', err);
-                return res.status(500).json({ error: 'Internal server error' });
+router.get('/completed', async (req, res) => {
+    let { page } = req.query;
+    const perPage = 10;
+    if (!page || page == 'undefined' || page <= 0) {
+        page = 1;
+    }
+
+    let offset = parseInt(parseInt(page) - 1) * perPage;
+
+    try {
+        const currentTimeUnix = Math.floor(Date.now() / 1000);
+        const count = await Pooldata.countDocuments({ startTime: { $gt: currentTimeUnix } });
+        let data = await Pooldata.find({ startTime: { $lt: currentTimeUnix } })
+            .sort({ startTime: -1 })
+            .skip(offset)
+            .limit(perPage)
+
+        if (data) {
+            return res.status(200).json({ error: 'OK', data: data, count });
+        }
+        else {
+            return res.status(200).json({ error: 'OK', data: [], count: 0 });
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+        return res.status(200).json({ error: error.message });
+    }
+});
+
+router.get('/user-nft', async (req, res) => {
+    let { page, address } = req.query;
+    if (!address) {
+        return res.status(200).json({ error: 'OK', data: [], count: 0 });
+    }
+
+    const perPage = 10;
+    if (!page || page == 'undefined' || page <= 0) {
+        page = 1;
+    }
+
+    let offset = parseInt(parseInt(page) - 1) * perPage;
+    try {
+        const count = await StakeInfo.countDocuments({ owner: address.toString().toLowerCase() });
+        let stakeInfoRecords = await StakeInfo.find({ owner: address.toString().toLowerCase() })
+            .sort({ created: -1 })
+            .skip(offset)
+            .limit(perPage)
+        if (stakeInfoRecords) {
+
+            let resultWithNFTInfo = [];
+
+            for (let stakeInfo of stakeInfoRecords) {
+                // Fetch NFTInfo data based on tokenId
+                let nftInfoData = await NFTInfo.findOne({ tokenId: stakeInfo.tokenId });
+                let poolData = await Pooldata.findOne({ pool_id: stakeInfo.pool_id });
+
+                // Combine StakeInfo and NFTInfo data
+                let combinedData = {
+                    poolData : poolData,
+                    stakeInfo: stakeInfo,
+                    nftInfo: nftInfoData // If nftInfoData is null, it means no NFTInfo found for the given tokenId
+                };
+
+                // Push the combined data to the result array
+                resultWithNFTInfo.push(combinedData);
             }
 
-            const metadata = JSON.parse(data);
-            res.json(metadata);
-        });
-    });
+            return res.status(200).json({ error: 'OK', data: resultWithNFTInfo, count : resultWithNFTInfo.length });
+        }
+        else {
+            return res.status(200).json({ error: 'OK', data: [], count: 0 });
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+        return res.status(200).json({ error: error.message });
+    }
 });
 
 
