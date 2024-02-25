@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const NFTInfo = require('../../models/NFTInfo');
 const Pooldata = require('../../models/Pooldata');
 const StakeInfo = require('../../models/StakeInfo');
+const updateMetadata = require("../../socket").updateMetadata;
 dotenv.config();
 
 router.get('/', [], async (req, res) => {
@@ -105,7 +106,7 @@ router.get('/upcoming-pool', async (req, res) => {
     }
 
     let offset = parseInt(parseInt(page) - 1) * perPage;
-   
+
     try {
         const currentTimeUnix = Math.floor(Date.now() / 1000);
         const count = await Pooldata.countDocuments({ startTime: { $gt: currentTimeUnix } });
@@ -186,7 +187,7 @@ router.get('/user-nft', async (req, res) => {
 
                 // Combine StakeInfo and NFTInfo data
                 let combinedData = {
-                    poolData : poolData,
+                    poolData: poolData,
                     stakeInfo: stakeInfo,
                     nftInfo: nftInfoData // If nftInfoData is null, it means no NFTInfo found for the given tokenId
                 };
@@ -195,7 +196,7 @@ router.get('/user-nft', async (req, res) => {
                 resultWithNFTInfo.push(combinedData);
             }
 
-            return res.status(200).json({ error: 'OK', data: resultWithNFTInfo, count : resultWithNFTInfo.length });
+            return res.status(200).json({ error: 'OK', data: resultWithNFTInfo, count: resultWithNFTInfo.length });
         }
         else {
             return res.status(200).json({ error: 'OK', data: [], count: 0 });
@@ -205,6 +206,11 @@ router.get('/user-nft', async (req, res) => {
         console.log(error.message);
         return res.status(200).json({ error: error.message });
     }
+});
+router.get('/update-metadata', async (req, res) => {
+    updateMetadata()
+    return res.status(200).json({ error: 'OK' });
+
 });
 
 
