@@ -39,11 +39,11 @@ const PooldataSchema = new mongoose.Schema({
   },
   title : {
     type:String,
-    required : true
+    required : false
   },
   logo : {
     type:String,
-    required : true
+    required : false
   },
   created: {
     type: Date,
