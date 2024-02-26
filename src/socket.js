@@ -16,7 +16,7 @@ var web3WS = new Web3(RPC);
 var myContract = new web3WS.eth.Contract(NFTABI, NftContractAddress);
 var stakeContract = new web3WS.eth.Contract(NFTSTAKEABI, NftStakeContract);
 
-var scanBlockNumber = 5636581;
+var scanBlockNumber = 5722318;
 var maxBlockNumber = 0;
 
 const getBlockNumber = () => {

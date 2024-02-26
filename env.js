@@ -1,8 +1,8 @@
 const RPC =  "https://testnet-rpc.genesys.network";
 const NFTABI = require("./src/Nft.json");
 const NFTSTAKEABI = require("./src/Stake.json");
-const NftContractAddress = "0xad5cb06f30b57218d0612fa99e128a19fdd022de";
-const NftStakeContract = "0x01c3F963E982B0Fa35cFe5567fD1A7f50B7E717f"
+const NftContractAddress = "0xAaC48072Abfe86A4D7480c7fCe75bd3B3f48Bcf9";
+const NftStakeContract = "0x92e41f5377fe8F3B0fCaCb9570A197084573a2c2"
 
 module.exports  =  { 
 	RPC,
