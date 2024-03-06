@@ -296,6 +296,7 @@ const updatePoolData = async (poolId = 0) => {
 
 cron.schedule('* * * * *', () => {
     getData()
+    getBlockNumber();
 });
 
 
