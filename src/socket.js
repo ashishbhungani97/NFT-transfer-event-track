@@ -2,6 +2,7 @@ const app = require("./app");
 var server = require('http').createServer(app);
 const axios = require('axios');
 var Web3 = require('web3');
+var cron = require('node-cron');
 const NFTInfo = require("./models/NFTInfo");
 const Pooldata = require("./models/Pooldata");
 const StakeInfo = require("./models/StakeInfo");
@@ -57,7 +58,7 @@ const getData = async () => {
             console.log('getData', e.message)
         }
     }
-    setTimeout(getData, 10000);
+
 }
 
 const TransferNFT_monitor = async (blockNumber, toBlockNumber) => {
@@ -291,6 +292,11 @@ const updatePoolData = async (poolId = 0) => {
         }
     }
 }
+
+
+cron.schedule('* * * * *', () => {
+    getData()
+});
 
 
 
