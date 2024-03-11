@@ -17,7 +17,7 @@ var web3WS = new Web3(RPC);
 var myContract = new web3WS.eth.Contract(NFTABI, NftContractAddress);
 var stakeContract = new web3WS.eth.Contract(NFTSTAKEABI, NftStakeContract);
 
-var scanBlockNumber = 5722318;
+var scanBlockNumber = 5964526;
 var maxBlockNumber = 0;
 
 const getBlockNumber = () => {
@@ -271,6 +271,8 @@ const updatePoolData = async (poolId = 0) => {
                 totalUnstaked: poolData.totalUnstaked,
                 rewardToken: poolData.rewardToken,
                 status: poolData.status,
+                symbol : poolData.symbol,
+                decimals : poolData.decimals,
                 title: poolData.poolData.split('#')[0],
                 logo: poolData.poolData.split('#')[1],
             })
@@ -286,6 +288,8 @@ const updatePoolData = async (poolId = 0) => {
                 totalUnstaked: poolData.totalUnstaked,
                 rewardToken: poolData.rewardToken,
                 status: poolData.status,
+                symbol : poolData.symbol,
+                decimals : poolData.decimals,
                 title: poolData.poolData.split('#')[0],
                 logo: poolData.poolData.split('#')[1],
             });

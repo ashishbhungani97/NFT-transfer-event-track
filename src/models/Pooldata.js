@@ -45,6 +45,14 @@ const PooldataSchema = new mongoose.Schema({
     type:String,
     required : false
   },
+  symbol : {
+    type:String,
+    required : false
+  },
+  decimals : {
+    type:String,
+    required : false
+  },
   created: {
     type: Date,
     default: Date.now,
