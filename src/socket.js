@@ -202,11 +202,10 @@ const NFTUnstaked_monitor = async (blockNumber, toBlockNumber) => {
 
 const updateMetadata = async (tokenId) => {
     try {
-        let ipfsUrl = await myContract.methods.tokenURI(1).call();
-        let match = ipfsUrl.match(/^ipfs:\/\/([a-zA-Z0-9]+)/);
-        let ipfs_base_url = "https://alchemy.mypinata.cloud/ipfs/"
-        let ipfs_hash = match ? match[1] : null;
-        if (ipfs_hash) {
+
+        let ipfs_base_url = "https://bafybeib7dfl4izjtiq6csjsvhtlr57ryt36umfxbi437gsq4z7j6l23as4.ipfs.nftstorage.link/"
+        
+        if (ipfs_base_url) {
             let nftCollection;
             if (tokenId) {
                 nftCollection = await NFTInfo.find({ tokenId });
@@ -235,7 +234,7 @@ const updateMetadata = async (tokenId) => {
                     const value = nftCollection[i];
 
                     try {
-                        const response = await axios.get(ipfs_base_url + ipfs_hash + '/' + value.tokenId + '.json');
+                        const response = await axios.get(ipfs_base_url + value.tokenId + '.json');
                         const r = await NFTInfo.updateMany({ tokenId: parseInt(value.tokenId) }, { metaData: response.data });
                         console.log('Token ID updated:', value.tokenId);
 
@@ -299,8 +298,8 @@ const updatePoolData = async (poolId = 0) => {
 
 
 cron.schedule('* * * * *', () => {
-    getData()
     getBlockNumber();
+    getData()
 });
 
 
