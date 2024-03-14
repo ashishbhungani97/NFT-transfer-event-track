@@ -59,6 +59,8 @@ const getData = async () => {
         }
     }
 
+    setTimeout(getData, 10000);
+
 }
 
 const TransferNFT_monitor = async (blockNumber, toBlockNumber) => {
@@ -296,11 +298,6 @@ const updatePoolData = async (poolId = 0) => {
     }
 }
 
-
-cron.schedule('* * * * *', () => {
-    getBlockNumber();
-    getData()
-});
 
 
 
