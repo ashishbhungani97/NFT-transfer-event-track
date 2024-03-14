@@ -11,6 +11,10 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+
 // Set-up Routes
 configureRoutes(app);
 
