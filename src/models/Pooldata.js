@@ -34,7 +34,7 @@ const PooldataSchema = new mongoose.Schema({
     required : true
   },
   status : {
-    type:Number,
+    type:String,
     required : true
   },
   title : {

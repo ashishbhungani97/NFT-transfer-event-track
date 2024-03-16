@@ -109,7 +109,7 @@ router.get('/upcoming-pool', async (req, res) => {
     try {
         const currentTimeUnix = Math.floor(Date.now() / 1000);
         const count = await Pooldata.countDocuments({ startTime: { $gt: currentTimeUnix } });
-        let data = await Pooldata.find({ startTime: { $gt: currentTimeUnix } })
+        let data = await Pooldata.find({ startTime: { $gt: currentTimeUnix } ,status : 'true'  })
             .sort({ startTime: 1 })
             .skip(offset)
             .limit(perPage)
@@ -138,7 +138,7 @@ router.get('/completed', async (req, res) => {
 
     try {
         const currentTimeUnix = Math.floor(Date.now() / 1000);
-        const count = await Pooldata.countDocuments({ startTime: { $gt: currentTimeUnix } });
+        const count = await Pooldata.countDocuments({ startTime: { $gt: currentTimeUnix } , status : 'true' });
         let data = await Pooldata.find({ startTime: { $lt: currentTimeUnix } })
             .sort({ startTime: -1 })
             .skip(offset)
